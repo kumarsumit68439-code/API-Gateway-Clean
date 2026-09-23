@@ -3,11 +3,10 @@ import crypto from "crypto";
 const PREFIX = "sk-gw-";
 
 /**
- * Generate a new API key.
- * Returns:
- *  - fullKey  -> the plaintext key (show once to the user)
- *  - hash     -> SHA-256 hash stored in DB
- *  - display  -> short, safe-to-display version (e.g. "sk-gw-4f9a1c...9b2d")
+ * Generates a brand-new platform API key.
+ * - `fullKey`   -> shown to the user ONCE, right after creation. Never stored.
+ * - `hash`      -> sha256 hash stored in the database, used to verify requests.
+ * - `display`   -> short, safe-to-display version (e.g. "sk-gw-4f9a1c...9b2d")
  */
 export function generateApiKey() {
   const secret = crypto.randomBytes(24).toString("hex"); // 48 hex chars

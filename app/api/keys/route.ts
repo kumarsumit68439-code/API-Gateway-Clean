@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/getUser";
-import { generateApiKey } from "@/lib/apiKeys";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { generateApiKey } from "@/lib/apiKeys";
 
 export async function GET() {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data, error } = await supabaseAdmin
+  const { data: keys, error } = await supabaseAdmin
     .from("api_keys")
-    .select("id, name, key_prefix, status, created_at")
+    .select("id, name, key_prefix, status, created_at, last_used_at")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ keys: data });
+  return NextResponse.json({ keys });
 }
 
 export async function POST(req: NextRequest) {
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
-  const name = (body.name as string) || "Default";
+  const name = (body?.name as string) || "Default Key";
 
   const { fullKey, hash, display } = generateApiKey();
 

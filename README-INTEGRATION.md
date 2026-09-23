@@ -67,4 +67,21 @@ Vercel will auto-deploy since it's already linked to this GitHub repo.
 
 | Page/Route | Purpose |
 |---|---|
-| `/dashboard` | Create, hide, revoke, reactiv
+| `/dashboard` | Create, hide, revoke, reactivate, delete API keys |
+| `/profile` | Shows logged-in GitHub user + logout button |
+| `/playground` | Test any key against any model in the browser |
+| `/docs` | Public API documentation for your users |
+| `POST /api/v1/chat/completions` | Main gateway — clients call this with YOUR issued key |
+| `GET /api/v1/models` | Lists every supported free model |
+
+## 7. Notes / next steps
+
+- Streaming responses aren't wired up yet (`stream: false` is hardcoded) —
+  straightforward to add later with `ReadableStream` once the base flow is
+  confirmed working.
+- OpenRouter's free-model lineup changes over time. `lib/models.ts` has a
+  static list — consider fetching `https://openrouter.ai/api/v1/models` and
+  filtering for `pricing.prompt === "0"` if you want it to stay current
+  automatically.
+- Basic per-key rate limiting isn't implemented — worth adding (e.g. via
+  Supabase counts or Vercel KV) before opening this up publicly.
